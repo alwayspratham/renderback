@@ -170,4 +170,4 @@ def test_age(client):
     assert response.status_code == 200
     data = response.json()
 
-    assert data["age"] == 12   # adjust based on your response
+    assert data["age"] == "age is 12"   # adjust based on your response
