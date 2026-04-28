@@ -1,6 +1,6 @@
 from sqlalchemy import Column,Integer,String,DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime,UTC
 
 from db.database import Base
 
@@ -11,7 +11,7 @@ class User(Base):
     email=Column(String(255),unique=True,nullable=False,index=True)
     password=Column(String(255),nullable=False)
     role=Column(String(255),default="user",nullable=False)
-    created_at=Column(DateTime,default=datetime.utcnow)
+    created_at=Column(DateTime,default=datetime.now(UTC))
 
     tasks=relationship("Task",back_populates="owner",cascade="all,delete")
 

@@ -51,7 +51,7 @@ def update_task(task_id:int,update_data:TaskUpdate,db:Session=Depends(get_db),us
         raise HTTPException(status_code=404,detail="Task not found to update")
 
 
-    for key,value in update_data.dict(exclude_unset=True).items():
+    for key,value in update_data.model_dump(exclude_unset=True).items():
         setattr(present_data,key,value)
     db.commit()
     db.refresh(present_data)
