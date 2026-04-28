@@ -42,21 +42,33 @@ def getTask(task_id:int,db:Session=Depends(get_db),user=Depends(get_current_user
     
     
     return task
-
-@router.put("/update/{task_id}",response_model=TaskResponse)
-def update_task(task_id:int,update_data:TaskUpdate,db:Session=Depends(get_db),user=Depends(get_current_user)):
-    present_data=db.query(Task).filter(Task.id==task_id).first()
+@router.put("/update/{task_id}", response_model=TaskResponse)
+def update_task(
+    task_id: int,
+    update_data: TaskUpdate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    present_data = db.query(Task).filter(Task.id == task_id).first()
 
     if not present_data:
-        raise HTTPException(status_code=404,detail="Task not found to update")
+        raise HTTPException(status_code=404, detail="Task not found to update")
 
+    # OPTIONAL BUT IMPORTANT: ownership check
+    if present_data.owner_id != user["id"]:
+        raise HTTPException(status_code=403, detail="Not authorized")
 
-    for key,value in update_data.model_dump(exclude_unset=True).items():
-        setattr(present_data,key,value)
+    update_dict = update_data.model_dump(exclude_unset=True)
+
+    allowed_fields = {"title", "description", "is_completed"}
+
+    for key, value in update_dict.items():
+        if key in allowed_fields:
+            setattr(present_data, key, value)
+
     db.commit()
     db.refresh(present_data)
-    print("RAW:", update_data)
-    print("DICT:", update_data.dict(exclude_unset=True))
+
     return present_data
 
 @router.delete("/delete/{task_id}")

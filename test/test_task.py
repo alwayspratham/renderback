@@ -1,26 +1,40 @@
 import pytest
+import uuid
 
 
-def register_user(client):
-    return client.post("/api/v1/auth/register", json={
-        "email": "test@example.com",
+# ---------- UTILITIES ---------- #
+
+def unique_email():
+    return f"test_{uuid.uuid4()}@example.com"
+
+
+def register_user(client, email):
+    res = client.post("/api/v1/auth/register", json={
+        "email": email,
         "password": "123456"
     })
+    assert res.status_code == 200
+    return res
 
 
-def login_user(client):
-    return client.post(
+def login_user(client, email):
+    res = client.post(
         "/api/v1/auth/login",
         data={
-            "username": "test@example.com",
+            "username": email,
             "password": "123456"
         }
     )
+    assert res.status_code == 200
+    return res
 
 
 def get_token(client):
-    register_user(client)
-    res = login_user(client)
+    email = unique_email()
+
+    register_user(client, email)
+    res = login_user(client, email)
+
     return res.json()["access_token"]
 
 
@@ -28,7 +42,7 @@ def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
 
-# ---------------- TASK TESTS ---------------- #
+# ---------- TASK TESTS ---------- #
 
 def test_create_task(client):
     token = get_token(client)
@@ -53,7 +67,7 @@ def test_create_task(client):
 def test_get_tasks(client):
     token = get_token(client)
 
-    # create one task first
+    # create a task first
     client.post(
         "/api/v1/tasks/create",
         json={
