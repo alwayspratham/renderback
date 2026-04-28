@@ -159,3 +159,7 @@ def test_delete_task(client):
 
     assert response.status_code == 200
     assert response.json()["message"] == f"{task_id} is deleted"
+def test_age(client):
+    token=get_token(client)
+    create_res=client.get( "/api/v1/tasks/age/12",json={"age":"age is 12"},headers=auth_headers(token))
+    assert create_res.status_code == 200

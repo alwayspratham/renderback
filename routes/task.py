@@ -20,6 +20,10 @@ def create_task(task:TaskCreate,db:Session=Depends(get_db),user=Depends(get_curr
     db.commit()
     db.refresh(new_task)
     return new_task
+@router.get("/age/{age}")
+def show_age(age:int,user=Depends(get_current_user)):
+    return {"age":f"age is {age}"}
+
 
 @router.get("/",response_model=list[TaskResponse])
 def get_task(db:Session=Depends(get_db),user=Depends(get_current_user)):
