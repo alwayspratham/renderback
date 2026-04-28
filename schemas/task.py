@@ -21,3 +21,6 @@ class TaskResponse(TaskBase):
     owner_id:int
     created_at:datetime
     class config:from_attributes=True
+
+class age(BaseModel):
+    age:int
