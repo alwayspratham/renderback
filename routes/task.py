@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db.session import get_db
 from models.task import Task
-from schemas.task import TaskCreate, TaskUpdate, TaskResponse,age
+from schemas.task import TaskCreate, TaskUpdate, TaskResponse
 from dependencies.auth import get_current_user
 
 router = APIRouter(prefix="/api/v1/tasks", tags=["Tasks"])
@@ -21,7 +21,7 @@ def create_task(task:TaskCreate,db:Session=Depends(get_db),user=Depends(get_curr
     db.refresh(new_task)
     return new_task
 @router.get("/age/{age}")
-def show_age(age:age,user=Depends(get_current_user)):
+def show_age(age:int):
     return {"age":f"age is {age}"}
 
 

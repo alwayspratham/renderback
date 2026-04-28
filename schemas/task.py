@@ -22,5 +22,3 @@ class TaskResponse(TaskBase):
     created_at:datetime
     class config:from_attributes=True
 
-class age(BaseModel):
-    age:int
